@@ -3,37 +3,17 @@ var testRunner = require("./testrunner.js");
 var fs=require('fs');
 var data = 0;
 var testsJSON = null;
+var valid = true;
 
 function validateTestsJSON(callback)
 {
-	fs.open('./tests.json', 'r', function(err, fd) {
-	    fs.fstat(fd, function(err, stats) {
-	        var bufferSize = stats.size,
-	            chunkSize = 512,
-	            buffer = new Buffer(bufferSize),
-	            bytesRead = 0;
-
-	        while (bytesRead < bufferSize) {
-	            if ((bytesRead + chunkSize) > bufferSize) {
-	                chunkSize = (bufferSize - bytesRead);
-	            }
-	            fs.read(fd, buffer, bytesRead, chunkSize, bytesRead);
-	            bytesRead += chunkSize;
-	        }
-	        data = buffer.toString('utf8', 0, bufferSize);
-	        fs.close(fd);
-
-	        try {
-				var validJSON = JSON.parse(data);
-				callback(validJSON);
-	        }
-	        catch(err) {
-	        	console.log("File is not written in a valid JSON Format");
-	        	callback(false);
-	        }
-	        
-	    });
-	});
+	try {
+		var obj = JSON.parse(fs.readFileSync('./tests.json', 'utf8'));
+		callback(obj);
+    }
+    catch(err) {
+    	return console.log("Invalid file");
+    }
 }
 
 function validateTestFormat(validJSON)
