@@ -40,15 +40,15 @@ var testRunner = function ()
           console.log(testName + " FAILED, BAD JSON RESPONSE: " + output);
           return false;
         }
-
         for(var key in testExpectedResponse)
         {
+          var testExpected = new RegExp(testExpectedResponse[key]);
+          console.log(testExpected.test(response[key]));
           if(testExpectedResponse.hasOwnProperty(key))
           {
             if(response.hasOwnProperty(key))
             {
-
-              if(testExpectedResponse[key] == response[key])
+              if(testExpected.test(response[key]))
               {
                 console.log(testName + " PASSED");
               }
